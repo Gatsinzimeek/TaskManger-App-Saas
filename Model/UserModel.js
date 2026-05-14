@@ -1,4 +1,5 @@
-const UserModel = {
+import mongoose from 'mongoose';
+const user = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
@@ -10,6 +11,8 @@ const UserModel = {
         type: Date,
         default: Date.now
     }   
-};
+});
+const UserModel = mongoose.model('User', user);   
+
 
 export default UserModel;

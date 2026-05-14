@@ -1,4 +1,5 @@
-const TaskModel = {
+import mongoose from 'mongoose';
+const taskModel = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -20,6 +21,8 @@ const TaskModel = {
         type: Date,
         default: Date.now,
     },
-};
+});
+
+const TaskModel = mongoose.model('Task', taskModel);
 
 export default TaskModel;

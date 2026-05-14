@@ -1,0 +1,33 @@
+{
+  "name": "taskmanger-app-saas",
+  "version": "1.0.0",
+  "description": "Build restFull Api saas with payment",
+  "keywords": [
+    "saas"
+  ],
+  "homepage": "https://github.com/Gatsinzimeek/TaskManger-App-Saas#readme",
+  "bugs": {
+    "url": "https://github.com/Gatsinzimeek/TaskManger-App-Saas/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gatsinzimeek/TaskManger-App-Saas.git"
+  },
+  "license": "ISC",
+  "author": "Ernest",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "test"
+  },
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.2",
+    "nodemon": "^3.1.14"
+  }
+}

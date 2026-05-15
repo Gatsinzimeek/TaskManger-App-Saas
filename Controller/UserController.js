@@ -65,19 +65,13 @@ const ChangePassword = async (req, res) => {
   const { token, oldPassword, newPassword } = req.body;
   
   try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
-    const User = await UserModel.findById(decodedToken.userId)
-    
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const User = await UserModel.findById(decodedToken.userId);
+
     if(!User){
         return res.status(404).json({message: "User not Found"});
     }
 
-    const validoldPassword = await argon2d.verify(User.password, oldPassword );
-    if(!validoldPassword){
-        return res.status(401).json({message: "Invalid old password"});  
-        
-    }
-    
     const hashedNewpassword = await argon2d.hash(newPassword);
 
     User.password = hashedNewpassword;
@@ -87,7 +81,14 @@ const ChangePassword = async (req, res) => {
     res.status(200).json({ message : "Password Change successfully"});
 
   } catch (error) {
-    res.status(500).json({message: "Error during changing password"});
+    if(error.name == "TokenExpiredError") {
+        return res.status(401).json({
+            success: false,
+            message: "This reset Link has Expired. Please request a new one."
+        });
+    }
+    console.error("error is this: ", error)
+    res.status(500).json({message: "Something Went wrong. Please try again later."});
   }
 };  
 
@@ -95,21 +96,23 @@ const forgottenPassword = async (req, res) => {
     const {email} = req.body;
     try {
 
-        const User = await UserModel.find({email});
+        const User = await UserModel.findOne({email});
         
         if(!User){
             return res.status(404).json({message: "User not Found"});
         }
 
+
         const token = await jwt.sign({userId: User._id}, process.env.JWT_SECRET, {expiresIn: "5min"});
 
         const link = `http://localhost:5000/api/change-password/${token}`;
-        sendmail(User.email, "Password Change Notification", ` Click Here if you want to change Your password ${link} 
+        sendmail(email, "Password Change Notification", ` Click Here if you want to change Your password ${link} 
                             Your password link will be Expired in less than 5 minutes.`);
 
         res.status(200).json({message: "Password Link sent But will Expired within 5 Minutes"});
 
     } catch (error) {
+        console.error("error during error ", error)
         res.status(500).json({message: "Error during Senting link"});
     }
 

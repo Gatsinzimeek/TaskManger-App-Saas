@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import { ChangePassword, forgottenPassword, LogoutUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
-import { CreateTask, DeleteTask, GetTasks, GetTaskById, UpdateTask } from "./Controller/TaskController.js";
+import { CreateTask, DeleteTask, GetAllTasks, GetTaskByStatus, UpdateTask } from "./Controller/TaskController.js";
 
 dotenv.config();
 
@@ -40,9 +40,9 @@ app.post("/api/forget-password", forgottenPassword);
 
 app.post("/api/create-tasks", CreateTask);
 
-app.get("/api/tasks", GetTasks);
+app.get("/api/get-tasks", GetAllTasks);
 
-app.get("/api/tasks/:id", GetTaskById);
+app.get("/api/get-tasks-by-status", GetTaskByStatus);
 
 app.put("/api/tasks/:id", UpdateTask);
 

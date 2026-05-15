@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
-import { ChangePassword, LogoutUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
+import { ChangePassword, forgottenPassword, LogoutUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
 import { CreateTask, DeleteTask, GetTasks, GetTaskById, UpdateTask } from "./Controller/TaskController.js";
 
 dotenv.config();
@@ -35,6 +35,7 @@ app.post("/api/logout", LogoutUser);
 
 app.post("/api/change-password", ChangePassword);   
 
+app.post("/api/forget-password", forgottenPassword);
 // Define API Task routes (to be implemented)
 
 app.post("/api/create-tasks", CreateTask);

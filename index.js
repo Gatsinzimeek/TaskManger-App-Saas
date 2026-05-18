@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import { ChangePassword, forgottenPassword, LogoutUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
-import { CreateTask, DeleteTask, GetAllTasks, GetTaskByStatus, UpdateTask } from "./Controller/TaskController.js";
+import { CreateTask, DeleteTasks, DeleteTaskById,  GetAllTasks, GetTaskByStatus, UpdateTask, ChangeTaskByStatus } from "./Controller/TaskController.js";
 
 dotenv.config();
 
@@ -44,10 +44,13 @@ app.get("/api/get-tasks", GetAllTasks);
 
 app.get("/api/get-tasks-by-status", GetTaskByStatus);
 
-app.put("/api/tasks/:id", UpdateTask);
+app.put("/api/Change-task-status/:id", ChangeTaskByStatus);
 
-app.delete("/api/tasks/:id", DeleteTask);
+app.put("/api/update-task/:id", UpdateTask);
 
+app.delete("/api/delete-task-Byid/:id", DeleteTaskById);
+
+app.delete("/api/delete-tasks", DeleteTasks);
 
 // Start the server
 app.listen(PORT, () => {

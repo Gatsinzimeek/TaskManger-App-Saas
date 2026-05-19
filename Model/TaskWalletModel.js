@@ -2,16 +2,15 @@ import mongoose, { Mongoose, Schema } from "mongoose";
 
 const TaskWallet = new Schema ({
     CustumedTask: {
-        Number,
-        default: 0,
-        require: true
+        type: Number,
+        default: 0
     },
     PaidTask: {
-        Number,
+        type: Number,
         default: 0
     },
     InitialTask: {
-        Number,
+        type: Number,
         default: 10
     }, 
     User: {
@@ -20,11 +19,11 @@ const TaskWallet = new Schema ({
         required: true
     },
     createAt: {
-        Date,
+        type: Date,
         default: Date.now()
     },
     updatedAt: {
-        Date,
+        type: Date,
         default: Date.now()
     }
     

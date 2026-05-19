@@ -2,10 +2,12 @@ import UserModel from "../Model/UserModel.js";
 import  argon2d  from "argon2";
 import jwt from "jsonwebtoken";
 import sendmail from "../utility/nodemailer.js";
+import TaskWalletModel from "../Model/TaskWalletModel.js";
 // Registration Handler Function
 
 const RegisterUser = async (req, res) => {
   const { username, email, password } = req.body;
+  
     try {  
         // Check if user already exists
         const existingUser = await UserModel.findOne({ email });
@@ -23,6 +25,9 @@ const RegisterUser = async (req, res) => {
             password: hashedPassword
         });
         await newUser.save();
+        await TaskWalletModel.create({
+         User: newUser._id
+        });
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
         console.error("Error registering user:", error);

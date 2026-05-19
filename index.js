@@ -38,7 +38,7 @@ app.post("/api/change-password", ChangePassword);
 app.post("/api/forget-password", forgottenPassword);
 // Define API Task routes (to be implemented)
 
-app.post("/api/create-tasks", CreateTask);
+app.post("/api/create-tasks/:id", CreateTask);
 
 app.get("/api/get-tasks", GetAllTasks);
 

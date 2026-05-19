@@ -1,21 +1,42 @@
 import mongoose from 'mongoose';
 import TaskModel from '../Model/TaskModel.js';
-
+import TaskWalletModel from '../Model/TaskWalletModel.js';
 const CreateTask = async (req, res) => {
   // Implement task creation logic here
   const {title, description, status} = req.body;
-
+  const userId = req.params.id;
+  let TaskWallet = 0;
   try {
+
+    const TaskWalletCheck = await TaskWalletModel.findOne({User: userId});
     
-    const newTask = new TaskModel({
+    if (!TaskWalletCheck) {
+      return res.status(404).json({
+          message: "Task wallet not found for this user"
+      });
+    }
+    if(TaskWalletCheck.CustumedTask >= TaskWalletCheck.InitialTask){
+      return res.status(401).json({
+        message: "You have reached to You limit. Subscribe to Our Medium plan or Premium plan in order to continue to add task"
+      });
+    }else{
+      const newTask = new TaskModel({
       title: title,
       description: description,
+      UserId: userId
     });
 
+
     await newTask.save();
+    await TaskWalletModel.findOneAndUpdate({User: userId}, { $inc: { CustumedTask: 1 } });
+
     res.status(200).json({message: "Task create Sucessfuly"})
 
+    }
+
+    
   } catch (error) {
+    console.error("error is giving: ",error)
     res.status(500).json({message: "These issue while creating Task Please Try again later"})
   }
 

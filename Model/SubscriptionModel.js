@@ -2,18 +2,15 @@ import mongoose from "mongoose";
 
 const Subscription = new mongoose.Schema({
     Freetier: {
-        Number,
-        required: true,
+        type: Number,
         default: 10
     },
     Medium: {
-        Number,
-        required: true,
+        type: Number,
         default: 50
     },
     Premium: {
-        Number,
-        required: true,
+        type: Number,
         default: 100
     }
 });

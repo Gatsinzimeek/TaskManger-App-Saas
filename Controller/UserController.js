@@ -1,6 +1,5 @@
 import UserModel from "../Model/UserModel.js";
 import  argon2  from "argon2";
-import jwt from "jsonwebtoken";
 import sendmail from "../utility/nodemailer.js";
 import TaskWalletModel from "../Model/TaskWalletModel.js";
 // Registration Handler Function
@@ -108,6 +107,25 @@ const LoginUser = async (req, res) => {
 
 const LogoutUser = async (req, res) => {
   // Implement logout logic here (e.g., clear session or token)
+
+
+  try {
+        res.clearCookie("token", {
+         httpOnly: true,
+         secure: true,
+         sameSite: "strict"
+      });
+
+      return res.status(200).json({
+         message: "Logged out successfully"
+      });
+
+  } catch (error) {
+        if(error.name === "TokenExpiredError"){
+            return res.status().json({message: "Login Again inorder to Continue"});
+        }
+        res.status(500).json({success: false, message: "Error on server Try again later."})
+  }
   
 };
 

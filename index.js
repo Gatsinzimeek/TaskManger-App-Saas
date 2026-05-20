@@ -37,6 +37,8 @@ app.post("/api/logout", LogoutUser);
 
 app.post("/api/change-password", ChangePassword);   
 
+app.post("/api/logout", LogoutUser);
+
 app.post("/api/forget-password", forgottenPassword);
 // Define API Task routes (to be implemented)
 

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import TaskModel from '../Model/TaskModel.js';
 import TaskWalletModel from '../Model/TaskWalletModel.js';
+import jwt from 'jsonwebtoken';
 const CreateTask = async (req, res) => {
   // Implement task creation logic here
   const {title, description, status} = req.body;
@@ -103,14 +104,15 @@ const UpdateTask = async (req, res) => {
   // Implement logic to update a specific task by ID for the authenticated user
     try {
       const id = req.params.id;
-    const {title, description} = req.body;
+    const {title, description, token} = req.body;
 
     if(!mongoose.Types.ObjectId.isValid(id)){
       return res.status(404).json({
         message: "Invalid id"
       });
     }
-    console.log(id);
+    const validateUser = await jwt.verify()
+
     const Task = await TaskModel.findByIdAndUpdate(id,{
       title: title, description: description 
     },{returnDocument: "after"});

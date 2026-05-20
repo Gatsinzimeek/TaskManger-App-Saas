@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
-import { ChangePassword, forgottenPassword, LogoutUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
-import { CreateTask, DeleteTasks, DeleteTaskById,  GetAllTasks, GetTaskByStatus, UpdateTask, ChangeTaskByStatus } from "./Controller/TaskController.js";
+import { ChangePassword, forgottenPassword, LogoutUser, validateUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
+import { CreateTask, DeleteTasks, DeleteTaskById, GetAllTasks, GetTaskByStatus, UpdateTask, ChangeTaskByStatus } from "./Controller/TaskController.js";
 
 dotenv.config();
 
@@ -30,6 +30,8 @@ app.get("/", (req, res) => {
 app.post("/api/login", LoginUser);
 
 app.post("/api/register", RegisterUser);
+
+app.post("/api/validateUser", validateUser);
 
 app.post("/api/logout", LogoutUser);
 

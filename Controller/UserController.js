@@ -1,5 +1,5 @@
 import UserModel from "../Model/UserModel.js";
-import  argon2d  from "argon2";
+import  argon2  from "argon2";
 import jwt from "jsonwebtoken";
 import sendmail from "../utility/nodemailer.js";
 import TaskWalletModel from "../Model/TaskWalletModel.js";
@@ -7,16 +7,17 @@ import TaskWalletModel from "../Model/TaskWalletModel.js";
 
 const RegisterUser = async (req, res) => {
   const { username, email, password } = req.body;
-  
+
     try {  
         // Check if user already exists
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
-        
+
+
         // Hash the password
-        const hashedPassword = await argon2d.hash(password);
+        const hashedPassword = await argon2.hash(password);
 
         // Create new user
         const newUser = new UserModel({
@@ -25,15 +26,59 @@ const RegisterUser = async (req, res) => {
             password: hashedPassword
         });
         await newUser.save();
+
+
         await TaskWalletModel.create({
          User: newUser._id
         });
-        res.status(201).json({ message: "User registered successfully" });
+                
+        const token = await jwt.sign({userId: newUser._id},process.env.JWT_SECRET,{expiresIn: '5min'});
+
+        const link = `http://localhost:5000/api/change-password/${token}`;       
+        try {
+            
+        await sendmail(email, "Validate Email Notification", ` Click Here if you want to validate Your account ${link} 
+                            Your validation link will be Expired in less than 5 minutes.`);
+            
+        res.status(201).json({ message: "Check On your email to verify email in order to login" });
+        } catch (error) {
+            console.log("error during sending email: ", error);
+        }
+
     } catch (error) {
         console.error("Error registering user:", error);
         res.status(500).json({ message: "Error registering user", error });
     }
 };
+
+// Validate Registered User
+
+const validateUser = async (req, res) => {
+    const {token} = req.body;
+
+    try {
+            
+        const valideToken = jwt.verify(token,process.env.JWT_SECRET);
+        const verifyUser = await UserModel.findById(valideToken.userId);
+        if(!verifyUser){
+            res.status(401).json({message: "Invalid Email Try again later."});
+        }
+
+        res.status(201).json({message: "Email Validated Successfully"});
+
+    } catch (error) { 
+        if(error.name == "TokenExpiredError") {
+        return res.status(401).json({
+            success: false,
+            message: "This reset Link has Expired. Please request a new one."
+        });
+    }
+    console.error("error is this: ", error)
+    res.status(500).json({message: "Something Went wrong. Please try again later."});
+        console.error("error during creating: ", error);
+    }
+    
+}
 
 // Login Handler Function
 
@@ -47,7 +92,7 @@ const LoginUser = async (req, res) => {
         }
 
         // Verify password
-        const isPasswordValid = await argon2d.verify(user.password, password);
+        const isPasswordValid = await argon2.verify(user.password, password);
         if (!isPasswordValid) {
             return res.status(400).json({ message: "Invalid username or password" });
         }
@@ -77,7 +122,7 @@ const ChangePassword = async (req, res) => {
         return res.status(404).json({message: "User not Found"});
     }
 
-    const hashedNewpassword = await argon2d.hash(newPassword);
+    const hashedNewpassword = await argon2.hash(newPassword);
 
     User.password = hashedNewpassword;
     await User.save();
@@ -124,5 +169,5 @@ const forgottenPassword = async (req, res) => {
 }
 
 
-export { RegisterUser, forgottenPassword, LoginUser , LogoutUser, ChangePassword };
+export { RegisterUser, forgottenPassword, LoginUser , LogoutUser, ChangePassword, validateUser};
 

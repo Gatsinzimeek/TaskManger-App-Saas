@@ -1,11 +1,21 @@
 import mongoose from 'mongoose';
 import TaskModel from '../Model/TaskModel.js';
 import TaskWalletModel from '../Model/TaskWalletModel.js';
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import UserModel from '../Model/UserModel.js';
 const CreateTask = async (req, res) => {
   // Implement task creation logic here
   const {title, description, status} = req.body;
-  const userId = req.params.id;
+  const authHeader = req.headers.authorization;
+     if (!authHeader) {
+         return res.status(401).json({
+            message: "No token provided"
+         });
+      }
+
+      const token = authHeader.split(" ")[1];
+  const valideToken = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = await UserModel.findById(valideToken.userId);
   let TaskWallet = 0;
   try {
 
@@ -27,32 +37,68 @@ const CreateTask = async (req, res) => {
       UserId: userId
     });
 
-
     await newTask.save();
     await TaskWalletModel.findOneAndUpdate({User: userId}, { $inc: { CustumedTask: 1 } });
 
-    res.status(200).json({message: "Task create Sucessfuly"})
+    res.status(200).json({message: "Task create Sucessfuly"});
 
     }
 
     
   } catch (error) {
+    if(error.name === "TokenExpiredError"){
+            return res.status().json({message: "Login Again inorder to Continue"});
+        }
     console.error("error is giving: ",error)
     res.status(500).json({message: "These issue while creating Task Please Try again later"})
   }
 
 };
 
-const GetAllTasks = async (req, res) => {
-  // Implement logic to get all tasks for the authenticated user
 
-  try {
-      const Tasks = await TaskModel.find();
-      res.status(200).json({Tasks, message:"Data Fetched Sucessfuly"});
-  } catch (error) {
-    console.error("error  : ", error);
-    res.status(500).json({message: "Error during Fetching all tasks"});
-  }
+const GetAllTasks = async (req, res) => {
+
+   try {
+
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+         return res.status(401).json({
+            message: "No token provided"
+         });
+      }
+
+      const token = authHeader.split(" ")[1];
+
+      const valideToken = jwt.verify(
+         token,
+         process.env.JWT_SECRET
+      );
+
+      const Tasks = await TaskModel.find({
+         UserId: valideToken.userId
+      });
+
+      res.status(200).json({
+         Tasks,
+         message: "Data fetched successfully"
+      });
+
+   } catch (error) {
+
+      if (error.name === "TokenExpiredError") {
+         return res.status(401).json({
+            message: "Login again to continue"
+         });
+      }
+
+      console.error(error);
+
+      res.status(500).json({
+         message: "Error during fetching tasks"
+      });
+
+   }
 };
 
 const GetTaskByStatus = async (req, res) => {
@@ -68,6 +114,9 @@ const GetTaskByStatus = async (req, res) => {
   res.status(200).json({Tasks, message: "Tasks Recieved Sucessfuly"});
   
   } catch (error) {
+    if(error.name === "TokenExpiredError"){
+            return res.status().json({message: "Login Again inorder to Continue"});
+        }
     res.status(500).json({message: "Error during Fetching Tasks"});
   }
 
@@ -76,8 +125,13 @@ const GetTaskByStatus = async (req, res) => {
 const ChangeTaskByStatus = async (req, res) => {
      // Implement logic to get a specific task by ID for the authenticated user
   try {
-    
-    const {status} = req.body;
+    const authHeader = req.headers.authorization;
+     if (!authHeader) {
+         return res.status(401).json({
+            message: "No token provided"
+         });
+      }
+
     const statusParam = status.trim().toLowerCase();
 
     const id = req.params.id;
@@ -94,6 +148,9 @@ const ChangeTaskByStatus = async (req, res) => {
     res.status(200).json({Tasks,message: "Tasks Status Change Sucessfuly"});
   
   } catch (error) {
+    if(error.name === "TokenExpiredError"){
+            return res.status().json({message: "Login Again inorder to Continue"});
+        }
     console.error("error: ", error);
     res.status(500).json({message: "Error during changing Tasks Status"});
   }
@@ -104,26 +161,47 @@ const UpdateTask = async (req, res) => {
   // Implement logic to update a specific task by ID for the authenticated user
     try {
       const id = req.params.id;
-    const {title, description, token} = req.body;
+    const {title, description} = req.body;
+    const authHeader = req.headers.authorization;
+     if (!authHeader) {
+         return res.status(401).json({
+            message: "No token provided"
+         });
+      }
 
+      const token = authHeader.split(" ")[1];
     if(!mongoose.Types.ObjectId.isValid(id)){
       return res.status(404).json({
         message: "Invalid id"
       });
     }
-    const validateUser = await jwt.verify()
-
-    const Task = await TaskModel.findByIdAndUpdate(id,{
-      title: title, description: description 
-    },{returnDocument: "after"});
-    if(!Task){
-      return res.status(404).json({
-        message: "Task to update not found"
+    const valideToken = await jwt.verify(token, process.env.JWT_SECRET);
+    const task = await TaskModel.findById(id);
+    
+    if(!task) {
+      return res.status(401).json({message: "Task not found"});
+    }
+    
+    if(task.UserId.toString() !== valideToken.userId){
+      return res.status(401).json({
+        message: "User not allowed to this update task"
       });
-    };
-    res.status(200).json({Task, message: "Task Updated Sucessfully"});
+    }else{
 
+      const Task = await TaskModel.findByIdAndUpdate(id,{
+        title: title, description: description 
+      },{returnDocument: "after"});
+      if(!Task){
+        return res.status(404).json({
+          message: "Task to update not found"
+        });
+      };
+      res.status(200).json({Task, message: "Task Updated Sucessfully"});
+    }
   } catch (error) {
+    if(error.name === "TokenExpiredError"){
+            return res.status().json({message: "Login Again inorder to Continue"});
+        }
     console.error("error: ", error);
     res.status(500).json({message: "Server issue Try again later."});
   }
@@ -149,11 +227,29 @@ const DeleteTaskById = async (req, res) => {
 const DeleteTasks = async (req, res) => {
   // Implement logic to delete all task for the authenticated user
   try {
-    
-    const RemoveTasks = await TaskModel.deleteMany({});
+    const authHeader = req.headers.authorization;
+     if (!authHeader) {
+         return res.status(401).json({
+            message: "No token provided"
+         });
+      }
+
+      const token = authHeader.split(" ")[1];
+      const valideToken = await jwt.verify(token, process.env.JWT_SECRET);
+    const verifyTasksByUser = await TaskModel.find({UserId: valideToken.userId});
+    if(!verifyTasksByUser.length){
+      return res.status(401).json({
+        message: "No tasks found for this user"
+      });
+    }   
+    await TaskModel.deleteMany({UserId: valideToken.userId});
 
     res.status(200).json({message: "All Task Deleted Sucessfully"});
+  
   } catch (error) {
+    if(error.name === "TokenExpiredError"){
+            return res.status(401).json({message: "Login Again inorder to Continue"});
+        }
     res.status(500).json({
       message: "Failed to Delete Server error Try Again later."
     })

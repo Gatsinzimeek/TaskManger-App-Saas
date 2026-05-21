@@ -42,7 +42,7 @@ app.post("/api/logout", LogoutUser);
 app.post("/api/forget-password", forgottenPassword);
 // Define API Task routes (to be implemented)
 
-app.post("/api/create-tasks/:id", CreateTask);
+app.post("/api/create-tasks", CreateTask);
 
 app.get("/api/get-tasks", GetAllTasks);
 

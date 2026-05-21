@@ -1,6 +1,7 @@
 import UserModel from "../Model/UserModel.js";
 import  argon2  from "argon2";
 import sendmail from "../utility/nodemailer.js";
+import jwt from "jsonwebtoken";
 import TaskWalletModel from "../Model/TaskWalletModel.js";
 // Registration Handler Function
 
@@ -9,7 +10,12 @@ const RegisterUser = async (req, res) => {
 
     try {  
         // Check if user already exists
-        const existingUser = await UserModel.findOne({ email });
+        const existingUser = await UserModel.findOne({ 
+            $or: [
+                {email: email},
+                {username: username} 
+            ]
+        });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
@@ -72,7 +78,7 @@ const validateUser = async (req, res) => {
             message: "This reset Link has Expired. Please request a new one."
         });
     }
-    console.error("error is this: ", error)
+    console.error("error is this: ", error);
     res.status(500).json({message: "Something Went wrong. Please try again later."});
         console.error("error during creating: ", error);
     }
@@ -101,7 +107,8 @@ const LoginUser = async (req, res) => {
 
         res.status(200).json({ message: "Login successful", token });
     } catch (error) {
-        res.status(500).json({ message: "Error logging in", error });
+        console.error("error is this : ", error);
+        res.status(500).json({ message: "Error logging in" });
     }
 };
 

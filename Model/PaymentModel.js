@@ -5,12 +5,26 @@ const Payment = new mongoose.Schema({
         Date,
         default: Date.now()
     },
-    Amount: {
-        Number,
-        default: 0
+    Plan: {
+      type: String,
+      enum: ["MEDIUM", "PREMIUM"],
+      required: true
+   },
+    amount: {
+      type: Number,
+      required: true
+   },
+   transaction_id: {
+      type: String,
+      required: true
+   },
+    channel_name: {
+        type: String,
+        enum: ["MOMO","AIRTEL_MONEY","CARD"]
     },
-    PaymentMethod: {
-        String,
+    phone_number: {
+        type: Number,
+        required: true
     },
     UserId: {
         type: mongoose.Types.ObjectId,

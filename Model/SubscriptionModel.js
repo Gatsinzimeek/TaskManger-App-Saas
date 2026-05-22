@@ -1,18 +1,21 @@
 import mongoose from "mongoose";
 
 const Subscription = new mongoose.Schema({
-    Freetier: {
-        type: Number,
-        default: 10
-    },
-    Medium: {
-        type: Number,
-        default: 50
-    },
-    Premium: {
-        type: Number,
-        default: 100
-    }
+     SubscriptionPlan: {
+      type: String,
+      enum: ["FREE", "MEDIUM", "PREMIUM"],
+      default: "FREE"
+   },
+   SubscriptionStatus: {
+      type: String,
+      enum: ["ACTIVE", "EXPIRED", "PENDING"],
+      default: "ACTIVE"
+   },
+   User: {
+           type: mongoose.Types.ObjectId,
+           ref: "User",
+           required: true
+       },
 });
 
 

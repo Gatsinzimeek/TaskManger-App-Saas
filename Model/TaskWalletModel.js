@@ -5,10 +5,6 @@ const TaskWallet = new Schema ({
         type: Number,
         default: 0
     },
-    PaidTask: {
-        type: Number,
-        default: 0
-    },
     InitialTask: {
         type: Number,
         default: 10

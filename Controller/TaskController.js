@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import TaskModel from '../Model/TaskModel.js';
 import TaskWalletModel from '../Model/TaskWalletModel.js';
 import jwt from "jsonwebtoken";
+import authMiddleware from '../Middleware/auth_Middleware.js';
 import UserModel from '../Model/UserModel.js';
 const CreateTask = async (req, res) => {
   // Implement task creation logic here

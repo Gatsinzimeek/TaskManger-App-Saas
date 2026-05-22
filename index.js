@@ -4,7 +4,9 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { ChangePassword, forgottenPassword, LogoutUser, validateUser, LoginUser, RegisterUser } from "./Controller/UserController.js";
 import { CreateTask, DeleteTasks, DeleteTaskById, GetAllTasks, GetTaskByStatus, UpdateTask, ChangeTaskByStatus } from "./Controller/TaskController.js";
-
+import authMiddleware from "./Middleware/auth_Middleware.js";
+import verifySubscription from "./Controller/subscriptionController.js";
+import paymentCheck from "./Controller/PaymentController.js";
 dotenv.config();
 
 const app = express();
@@ -37,12 +39,10 @@ app.post("/api/logout", LogoutUser);
 
 app.post("/api/change-password", ChangePassword);   
 
-app.post("/api/logout", LogoutUser);
-
 app.post("/api/forget-password", forgottenPassword);
 // Define API Task routes (to be implemented)
 
-app.post("/api/create-tasks", CreateTask);
+app.post("/api/create-tasks",authMiddleware, CreateTask);
 
 app.get("/api/get-tasks", GetAllTasks);
 
@@ -55,6 +55,12 @@ app.put("/api/update-task/:id", UpdateTask);
 app.delete("/api/delete-task-Byid/:id", DeleteTaskById);
 
 app.delete("/api/delete-tasks", DeleteTasks);
+
+// Define of Subscription API
+
+app.post("/api/subscribe/:id", verifySubscription);
+
+app.post("/api/subscribe/:id", paymentCheck);
 
 // Start the server
 app.listen(PORT, () => {

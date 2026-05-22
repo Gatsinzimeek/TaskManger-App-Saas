@@ -60,7 +60,7 @@ app.delete("/api/delete-tasks", DeleteTasks);
 
 app.post("/api/subscribe/:id", verifySubscription);
 
-app.post("/api/subscribe/:id", paymentCheck);
+app.post("/api/payment-verify/:id", paymentCheck);
 
 // Start the server
 app.listen(PORT, () => {

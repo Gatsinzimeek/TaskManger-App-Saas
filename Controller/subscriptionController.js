@@ -15,6 +15,7 @@ const verifySubscription = async (req, res) => {
                 message: "Invalid plan"
             });
         }
+        console.log(phone_number);
         if(!validatePhone(phone_number)){
             return res.status(400).json({
                 message: "Please Enter valid phone number"
@@ -48,17 +49,22 @@ const verifySubscription = async (req, res) => {
             phone_number,
             UserId: userId
         })
-        await SubscriptionModel.create({
-            
-        })
+        await SubscriptionModel.create(
+            {
+                User: user,
+                SubscriptionStatus: "PENDING"
+
+            }
+        )
         res.status(200).json({
             message: "Payment Initiated",
             data: response
         });
+        console.log(response);
         
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: ""})
+        res.status(500).json({message: "Failed to send Request Try again later."});
     }
 }
 

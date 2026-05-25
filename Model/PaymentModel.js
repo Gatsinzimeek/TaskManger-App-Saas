@@ -4,10 +4,9 @@ const Payment = new mongoose.Schema({
     PaymentDate: {
         type: Date,
     },
-    Plan: {
+    plan: {
       type: String,
-      enum: ["MEDIUM", "PREMIUM"],
-      required: true
+      enum: ["MEDIUM", "PREMIUM"]
    },
     amount: {
       type: Number,
@@ -15,11 +14,9 @@ const Payment = new mongoose.Schema({
    },
    internal_transaction_id: {
       type: String,
-      required: true
    },
    external_transaction_id: {
       type: String,
-      required: true
    },
     channel_name: {
         type: String,
@@ -33,6 +30,15 @@ const Payment = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    payment_status: {
+        type: String,
+        enum: [
+            "PENDING",
+            "VALID",
+            "FAILED"
+        ],
+        default: "PENDING"
     },
     createdAt: {
        type: Date,

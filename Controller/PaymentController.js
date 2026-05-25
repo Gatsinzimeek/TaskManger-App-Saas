@@ -5,7 +5,7 @@ import { SUBSCRIPTION_PLANS } from "../config/subscriptionPlan.js";
 import TaskWalletModel from "../Model/TaskWalletModel.js";
 import taskStatementModel from "../Model/task_statement_model.js";
 
-const paymentCheck = async () => {
+const paymentCheck = async (req,res) => {
     try {
         const {transaction_id} = req.body;
         
@@ -43,7 +43,7 @@ const paymentCheck = async () => {
                 new: true
             }
          );
-         await TaskStatementModel.create({
+         await taskStatementModel.create({
             Event: "Top_up",
             wallet_id: wallet._id,
             userId: Payment.UserId,

@@ -16,6 +16,7 @@ const Subscription = new mongoose.Schema({
            ref: "User",
            required: true
    },
+   expiresAt: Date,
    createdAt: {
         type: Date,
         default: Date.now,

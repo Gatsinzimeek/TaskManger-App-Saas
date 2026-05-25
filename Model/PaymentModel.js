@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Payment = new mongoose.Schema({
     PaymentDate: {
-        Date,
+        type: Date,
         default: Date.now()
     },
     Plan: {
@@ -14,7 +14,11 @@ const Payment = new mongoose.Schema({
       type: Number,
       required: true
    },
-   transaction_id: {
+   internal_transaction_id: {
+      type: String,
+      required: true
+   },
+   external_transaction_id: {
       type: String,
       required: true
    },
@@ -31,6 +35,7 @@ const Payment = new mongoose.Schema({
         ref: "User",
         required: true
     }
+
 });
 
 const PaymentModel = mongoose.model('Payment',Payment);

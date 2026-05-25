@@ -1,6 +1,9 @@
 import { verifyPayment } from "../services/Urubuto.services.js";
+import PaymentModel from "../Model/PaymentModel.js";
+import SubscriptionModel from "../Model/SubscriptionModel.js";
+import { SUBSCRIPTION_PLANS } from "../config/subscriptionPlan.js";
 
-const paymentCheck = () => {
+const paymentCheck = async () => {
     try {
         
     } catch (error) {

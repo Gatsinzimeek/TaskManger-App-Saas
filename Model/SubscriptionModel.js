@@ -15,7 +15,15 @@ const Subscription = new mongoose.Schema({
            type: mongoose.Types.ObjectId,
            ref: "User",
            required: true
-       },
+   },
+   createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 

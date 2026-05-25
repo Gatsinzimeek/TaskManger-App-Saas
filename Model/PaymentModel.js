@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const Payment = new mongoose.Schema({
     PaymentDate: {
         type: Date,
-        default: Date.now()
     },
     Plan: {
       type: String,
@@ -34,7 +33,15 @@ const Payment = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "User",
         required: true
-    }
+    },
+    createdAt: {
+       type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+       type: Date,
+        default: Date.now,
+    },
 
 });
 

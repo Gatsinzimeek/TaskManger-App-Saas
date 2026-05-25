@@ -28,11 +28,11 @@ const taskStatement = new mongoose.Schema({
         require: true
     },
     createdAt: {
-        Date,
+        type: Date,
         default: Date.now()
     },
     updateAt: {
-        Date,
+        type: Date,
         default: Date.now()
     }
 

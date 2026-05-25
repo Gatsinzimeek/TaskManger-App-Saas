@@ -10,7 +10,7 @@ const urubuto = axios.create({
 
 
 export const initiatePayment = async payload => {
-    const response = await urubuto.post(`v2/payment/initiate`,payload);
+    const response = await urubuto.post(`/v2/payment/initiate`,payload);
    return response.data;
 };
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import TaskWalletModel from "./TaskWalletModel";
+import TaskWalletModel from "./TaskWalletModel.js";
 const taskStatement = new mongoose.Schema({
     Event: {
         type: String,

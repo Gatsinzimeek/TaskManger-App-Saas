@@ -58,9 +58,9 @@ app.delete("/api/delete-tasks", DeleteTasks);
 
 // Define of Subscription API
 
-app.post("/api/subscribe/:id", verifySubscription);
+app.post("/api/subscribe",authMiddleware, verifySubscription);
 
-app.post("/api/payment-verify/:id", paymentCheck);
+app.post("/api/payment-verify", authMiddleware,paymentCheck);
 
 // Start the server
 app.listen(PORT, () => {

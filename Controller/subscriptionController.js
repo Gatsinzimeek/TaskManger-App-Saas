@@ -48,7 +48,9 @@ const verifySubscription = async (req, res) => {
             phone_number,
             UserId: userId
         })
-        await SubscriptionModel.create({})
+        await SubscriptionModel.create({
+            
+        })
         res.status(200).json({
             message: "Payment Initiated",
             data: response

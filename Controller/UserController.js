@@ -39,7 +39,7 @@ const RegisterUser = async (req, res) => {
                 
         const token = await jwt.sign({userId: newUser._id},process.env.JWT_SECRET,{expiresIn: '5min'});
 
-        const link = `http://localhost:5000/api/change-password/${token}`;       
+        const link = `http://localhost:5000/api/verify-user/${token}`;       
         try {
             
         await sendmail(email, "Validate Email Notification", ` Click Here if you want to validate Your account ${link} 

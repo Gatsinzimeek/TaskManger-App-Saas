@@ -13,7 +13,6 @@ const RegisterUser = async (req, res) => {
         const existingUser = await UserModel.findOne({ 
             $or: [
                 {email: email},
-                {username: username} 
             ]
         });
         if (existingUser) {
@@ -39,7 +38,7 @@ const RegisterUser = async (req, res) => {
                 
         const token = await jwt.sign({userId: newUser._id},process.env.JWT_SECRET,{expiresIn: '5min'});
 
-        const link = `http://localhost:5000/api/verify-user/${token}`;       
+        const link = `http://localhost:5173/verify-user/${token}`;       
         try {
             
         await sendmail(email, "Validate Email Notification", ` Click Here if you want to validate Your account ${link} 

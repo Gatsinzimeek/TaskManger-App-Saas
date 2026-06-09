@@ -87,24 +87,27 @@ const validateUser = async (req, res) => {
 // Login Handler Function
 
 const LoginUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
     try {
         // Find user by username
-        const user = await UserModel.findOne({ username });
+        const user = await UserModel.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "Invalid username or password" });
+            return res.status(400).json({ message: "Invalid email or password" });
         }
 
         // Verify password
         const isPasswordValid = await argon2.verify(user.password, password);
         if (!isPasswordValid) {
-            return res.status(400).json({ message: "Invalid username or password" });
+            return res.status(400).json({ message: "Invalid email or password" });
         }
 
         // Generate JWT token (to be implemented)
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        res.status(200).json({ message: "Login successful", token });
+        const userData = {
+            username: user.username,
+            email: user.email
+        }
+        res.status(200).json({ message: "Login successful", token, user: userData});
     } catch (error) {
         console.error("error is this : ", error);
         res.status(500).json({ message: "Error logging in" });

@@ -32,7 +32,7 @@ const authMiddleware = (req, res, next) => {
       if (error.name === "TokenExpiredError") {
 
          return res.status(401).json({
-            message: "Session expired"
+            message: "login again to continue"
          });
 
       }

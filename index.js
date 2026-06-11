@@ -44,17 +44,17 @@ app.post("/api/forget-password", forgottenPassword);
 
 app.post("/api/create-tasks",authMiddleware, CreateTask);
 
-app.get("/api/get-tasks", GetAllTasks);
+app.get("/api/get-tasks",authMiddleware, GetAllTasks);
 
-app.get("/api/get-tasks-by-status", GetTaskByStatus);
+app.get("/api/get-tasks-by-status",authMiddleware, GetTaskByStatus);
 
-app.put("/api/Change-task-status/:id", ChangeTaskByStatus);
+app.put("/api/Change-task-status/:id",authMiddleware, ChangeTaskByStatus);
 
-app.put("/api/update-task/:id", UpdateTask);
+app.put("/api/update-task/:id",authMiddleware, UpdateTask);
 
-app.delete("/api/delete-task-Byid/:id", DeleteTaskById);
+app.delete("/api/delete-task-Byid/:id",authMiddleware, DeleteTaskById);
 
-app.delete("/api/delete-tasks", DeleteTasks);
+app.delete("/api/delete-tasks",authMiddleware, DeleteTasks);
 
 // Define of Subscription API
 

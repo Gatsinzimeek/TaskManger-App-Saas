@@ -28,7 +28,7 @@ const CreateTask = async (req, res) => {
       });
     }
     if(TaskWalletCheck.CustumedTask >= TaskWalletCheck.InitialTask){
-      return res.status(401).json({
+      return res.status(403).json({
         message: "You have reached to You limit. Subscribe to Our Medium plan or Premium plan in order to continue to add task"
       });
     }else{
@@ -47,9 +47,6 @@ const CreateTask = async (req, res) => {
 
     
   } catch (error) {
-    if(error.name === "TokenExpiredError"){
-            return res.status().json({message: "Login Again inorder to Continue"});
-        }
     console.error("error is giving: ",error)
     res.status(500).json({message: "These issue while creating Task Please Try again later"})
   }
@@ -162,7 +159,7 @@ const UpdateTask = async (req, res) => {
   // Implement logic to update a specific task by ID for the authenticated user
     try {
       const id = req.params.id;
-    const {title, description} = req.body;
+    const {title, description,status} = req.body;
     const authHeader = req.headers.authorization;
      if (!authHeader) {
          return res.status(401).json({
@@ -190,7 +187,7 @@ const UpdateTask = async (req, res) => {
     }else{
 
       const Task = await TaskModel.findByIdAndUpdate(id,{
-        title: title, description: description 
+        title: title, description: description, status: status
       },{returnDocument: "after"});
       if(!Task){
         return res.status(404).json({

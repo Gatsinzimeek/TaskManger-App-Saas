@@ -8,6 +8,7 @@ import authMiddleware from "./Middleware/auth_Middleware.js";
 import verifySubscription from "./Controller/subscriptionController.js";
 import {GetPaymentStatus} from './Controller/paymentStatus.js'
 import processPayment from "./Controller/PaymentController.js";
+import GetDashboardStats from "./Controller/UserDashboardController.js";
 dotenv.config();
 
 const app = express();
@@ -56,6 +57,12 @@ app.put("/api/update-task/:id",authMiddleware, UpdateTask);
 app.delete("/api/delete-task-Byid/:id",authMiddleware, DeleteTaskById);
 
 app.delete("/api/delete-tasks",authMiddleware, DeleteTasks);
+
+app.get(
+  "/api/dashboard-stats",
+  authMiddleware,
+  GetDashboardStats
+);
 
 // Define of Subscription API
 

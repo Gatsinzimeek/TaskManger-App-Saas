@@ -5,67 +5,53 @@ import UserModel from "../Model/UserModel.js";
 import SubscriptionModel from "../Model/SubscriptionModel.js";
 import { SUBSCRIPTION_PLANS } from "../config/subscriptionPlan.js";
 import validatePhone from "../utility/validatePhone.js";
-const verifySubscription = async (req, res) => {
-    try {
-        const userId = req.user.userId;
 
-        const {plan, phone_number, channel_name} = req.body;
-        if(!SUBSCRIPTION_PLANS[plan]){
-            return res.status(400).json({
-                message: "Invalid plan"
-            });
-        }
-        console.log(phone_number);
-        if(!validatePhone(phone_number)){
-            return res.status(400).json({
-                message: "Please Enter valid phone number"
-            });
-        }
+const verifySubscription = async (req,res)=>{
+   try{
 
-        const user = await UserModel.findById(userId);
+      const userId = req.user.userId;
 
-        const planData = SUBSCRIPTION_PLANS[plan];
-        const transaction_id = crypto.randomUUID();
+      const {
+         plan,
+         phone_number,
+         channel_name
+      } = req.body;
 
-        const payload = {
-            amount: planData.amount,
-            channel_name,
-            merchant_code: process.env.URUBUTO_MERCHANT_CODE,
-            payer_code: user.id.toString(),
-            payer_names: user.username,
-            phone_number,
-            service_code: process.env.URUBUTO_SERVICE_CODE,
-            transaction_id,
-            payer_email: user.email
-            
-        };
-        const response = await initiatePayment(payload);
-        
-        await PaymentModel.create({
-            plan: plan,
-            amount: planData.amount,
-            internal_transaction_id: transaction_id,
-            channel_name,
-            phone_number,
-            UserId: userId
-        })
-        await SubscriptionModel.create(
-            {
-                User: user,
-                SubscriptionStatus: "PENDING"
+      const user = await UserModel.findById(userId);
 
-            }
-        )
-        res.status(200).json({
-            message: "Payment Initiated",
-            data: response
-        });
-        console.log(response);
-        
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({message: "Failed to send Request Try again later."});
-    }
+      const transaction_id = crypto.randomUUID();
+
+      const planData = SUBSCRIPTION_PLANS[plan];
+
+      await initiatePayment({
+         amount:planData.amount,
+         channel_name,
+         merchant_code:process.env.URUBUTO_MERCHANT_CODE,
+         payer_code:user.id,
+         payer_names:user.username,
+         phone_number,
+         service_code:process.env.URUBUTO_SERVICE_CODE,
+         transaction_id,
+         payer_email:user.email
+      });
+
+      await PaymentModel.create({
+         UserId:userId,
+         plan,
+         amount:planData.amount,
+         internal_transaction_id:transaction_id,
+         channel_name,
+         phone_number,
+         payment_status:"PENDING"
+      });
+
+      res.status(200).json({
+         message:"Payment Initiated"
+      });
+
+   }catch(error){
+      console.log(error);
+   }
 }
 
 export default verifySubscription;

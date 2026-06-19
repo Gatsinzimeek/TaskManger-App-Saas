@@ -6,7 +6,8 @@ import { ChangePassword, forgottenPassword, LogoutUser, validateUser, LoginUser,
 import { CreateTask, DeleteTasks, DeleteTaskById, GetAllTasks, GetTaskByStatus, UpdateTask, ChangeTaskByStatus } from "./Controller/TaskController.js";
 import authMiddleware from "./Middleware/auth_Middleware.js";
 import verifySubscription from "./Controller/subscriptionController.js";
-import paymentCheck from "./Controller/PaymentController.js";
+import {GetPaymentStatus} from './Controller/paymentStatus.js'
+import processPayment from "./Controller/PaymentController.js";
 dotenv.config();
 
 const app = express();
@@ -58,10 +59,23 @@ app.delete("/api/delete-tasks",authMiddleware, DeleteTasks);
 
 // Define of Subscription API
 
-app.post("/api/subscribe",authMiddleware, verifySubscription);
+app.post(
+   "/api/subscribe",
+   authMiddleware,
+   verifySubscription
+);
 
-app.post("/api/payment-verify", authMiddleware,paymentCheck);
+app.get(
+   "/api/payment/status",
+   authMiddleware,
+   GetPaymentStatus
+);
 
+app.post(
+   "/api/payment/process",
+   authMiddleware,
+   processPayment
+);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

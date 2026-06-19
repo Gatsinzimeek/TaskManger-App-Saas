@@ -100,24 +100,26 @@ const GetAllTasks = async (req, res) => {
 };
 
 const GetTaskByStatus = async (req, res) => {
-  // Implement logic to get a specific task by ID for the authenticated user
   try {
-    
-  const statusParamas = req.query.status;
-  const status = statusParamas.trim().toLowerCase();
-  const Tasks = await TaskModel.find({status: status});
-  if(!Tasks){
-    return res.status(404).json({message: "Task not found"});
-  }
-  res.status(200).json({Tasks, message: "Tasks Recieved Sucessfuly"});
-  
-  } catch (error) {
-    if(error.name === "TokenExpiredError"){
-            return res.status().json({message: "Login Again inorder to Continue"});
-        }
-    res.status(500).json({message: "Error during Fetching Tasks"});
-  }
+    const userId = req.user.id;
+    const status = req.params.status.trim().toLowerCase();
 
+    const tasks = await TaskModel.find({
+      UserId: userId,
+      status,
+    });
+
+    res.status(200).json({
+      Tasks: tasks,
+      message: "Tasks received successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Error during fetching tasks",
+    });
+  }
 };
 
 const ChangeTaskByStatus = async (req, res) => {

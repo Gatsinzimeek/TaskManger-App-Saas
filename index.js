@@ -47,7 +47,7 @@ app.post("/api/create-tasks",authMiddleware, CreateTask);
 
 app.get("/api/get-tasks",authMiddleware, GetAllTasks);
 
-app.get("/api/get-tasks-by-status",authMiddleware, GetTaskByStatus);
+app.get("/api/get-tasks-by-status/:status",authMiddleware, GetTaskByStatus);
 
 app.put("/api/Change-task-status/:id",authMiddleware, ChangeTaskByStatus);
 
